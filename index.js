@@ -15,12 +15,14 @@ const rl = readline.createInterface({
 
 function mainMenu() {
   console.log("\nEmployee Management System");
+  console.log("--------------Main Menu--------------");
   console.log("1. Add Employee");
   console.log("2. View Employee by ID");
   console.log("3. View Employee by Name");
   console.log("4. View Employee by Email");
   console.log("5. View All Employees");
   console.log("6. Exit");
+  console.log("-------------------------------------");
 
   rl.question("\nEnter your choice: ", (choice) => {
     switch (choice) {
