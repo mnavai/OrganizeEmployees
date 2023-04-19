@@ -1,36 +1,49 @@
-import Employee from "./employee.js";
-import { validateName, validatePhoneNumber } from "./validations.js";
+import fs from "fs";
 
 function addEmployee(employees, rl, mainMenu) {
-  console.log("\nAdding an Employee");
-
+  console.log("\nAdd Employee");
   rl.question("Enter the Name: ", (name) => {
-    if (!validateName(name)) {
-      console.log("Invalid name. Name must consist only of alphabets.");
+    if (!/^[a-zA-Z]+$/.test(name)) {
+      console.log("Invalid name. Name should consist only of alphabets.");
       addEmployee(employees, rl, mainMenu);
       return;
     }
 
     rl.question("Enter the Age: ", (age) => {
-      age = parseInt(age);
-      if (isNaN(age) || age < 0) {
-        console.log("Invalid age. Please enter a non-negative integer.");
+      const parsedAge = parseInt(age);
+      if (isNaN(parsedAge)) {
+        console.log("Invalid age. Please enter a valid number.");
         addEmployee(employees, rl, mainMenu);
         return;
       }
 
-      rl.question("Enter the Contact Number (in xxx-xxx-xxxx format): ", (contact) => {
-        if (!validatePhoneNumber(contact)) {
-          console.log("Invalid phone number. Please enter the number in xxx-xxx-xxxx format.");
+      rl.question("Enter the Contact: ", (contact) => {
+        if (!/^\d{3}-\d{3}-\d{4}$/.test(contact)) {
+          console.log("Invalid contact number. Please enter in the format xxx-xxx-xxxx.");
           addEmployee(employees, rl, mainMenu);
           return;
         }
 
         rl.question("Enter the Email: ", (email) => {
-          const employee = new Employee(name, age, employees.length + 1, contact, email);
+          const id = employees.length + 1;
+          const employee = {
+            id: id,
+            name: name,
+            age: parsedAge,
+            contact: contact,
+            email: email,
+          };
           employees.push(employee);
-          console.log(`\nEmployee added successfully. ID: ${employee.id}`);
-          mainMenu();
+
+          const filename = `${id}.txt`;
+          fs.writeFile(filename, JSON.stringify(employee), (err) => {
+            if (err) {
+              console.log("Error saving employee to file.");
+            } else {
+              console.log(`Employee added. Entries saved in ${filename}`);
+            }
+            mainMenu();
+          });
         });
       });
     });
